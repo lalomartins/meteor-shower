@@ -28,7 +28,9 @@ Assuming someone in the team already configured the deployment, just `cd myapp; 
 
 ## I want to use it in my app
 
-All right, now we're talking. What can we help you with?
+All right, now we're talking. The one thing you need to know is that all configuration is stored in an [YAML](http://yaml.org/) file, which can be named `setup.yaml`, `.setup.yaml`, or `.meteor/setup.yaml`. (If by mistake you have more than one, they'll be looked up in that order.) It has a few sections: “packages”, “development”, and “deployment”, which by an amazing coincidence correspond to the three sections below.
+
+What can we help you with?
 
 ### Please manage my dependencies
 
@@ -36,12 +38,44 @@ No problem.
 
 ### On development mode, this app should be run in a certain environment
 
-We can do that.
+We can do that. We can get packages as:
+
+* Atmosphere smart packages
+* Git repos (any branch, tag, or even specific revision)
+* Archives (tar, tar.gz, tar.bz2, tar.lzma, zip, rar, 7z) from a given http/https URL
+* Bazaar repos (tip of any given branch)
+
+The example below has one of each:
+
+```yaml
+packages:
+    momentjs:
+        from: atmosphere
+    model:
+        from: atmosphere
+        version: 0.3.0
+    paypal:
+        from: git
+        remote: https://github.com/LimeMakers/meteor-paypal.git
+    iron-router:
+        from: git
+        remote: https://github.com/EventedMind/iron-router.git
+        ref: shark
+    lm-shared-models:
+        from: archive
+        url: http://our-internal-server.local/packages/shared-models-r23.7z
+    lm-some-other-stuff:
+        from: bzr
+        branch: bzr+ssh://bzr@bzr.limemakers.de/bzr/some-other-stuff/master
+    social:
+        from: bzr
+        branch: lp:meteor-social
+```
 
 ### Now it's time to deploy to my server
 
 Yay.
 
-### I want to integrate with RTD
+### I want to integrate with [RTD](http://xolvio.github.io/rtd/)
 
-We don't do that yet, sorry, but it's in the plans. For now, whenever we say `cd myapp` above, just assume `cd myapp/app`.
+We don't do that yet, sorry, but it's in the plans. For now, however, you can store you setup.yaml at your project root, and if Shower notices you don't have a `.meteor` around but you do have `app/.meteor`, it will correctly operate inside `app`. So you can manually use both Shower and RTD; just run `mts` first, then stop meteor, and run `rtd`. Except, well, you can use Shower's environment management. Yet.
