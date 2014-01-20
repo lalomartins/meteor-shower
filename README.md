@@ -70,7 +70,31 @@ packages:
 
 ### On development mode, this app should be run in a certain environment
 
-We can do that.
+We can do that. Just give us the variables:
+
+```yaml
+development:
+    environment:
+        MONGO_URL: mongodb://localhost/myproject
+        ROOT_URL: http://localhost:3000/
+```
+
+There are a few variables Shower can expand for you there:
+
+* **PUBLIC_IP**: First non-loopback IP address found in this machine (handy if you frequently need to test your project from other devices, e.g. for mobile development)
+
+(All right, one is not a few. But we're sure we'll need more later.)
+
+So let's try that:
+
+```yaml
+development:
+    environment:
+        MONGO_URL: mongodb://localhost/myproject
+        ROOT_URL: http://${PUBLIC_IP}:3000/
+```
+
+We're also planning on an interface to specify other things that must also be running (e.g. mongod), but the interface for that isn't defined yet. Ideally we want to detect that it's already running and don't start it in that case; also, when the app stops, we don't necessarily want to stop those.
 
 ### Now it's time to deploy to my server
 
