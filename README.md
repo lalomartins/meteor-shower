@@ -34,11 +34,7 @@ What can we help you with?
 
 ### Please manage my dependencies
 
-No problem.
-
-### On development mode, this app should be run in a certain environment
-
-We can do that. We can get packages as:
+No problem. We can get packages as:
 
 * Atmosphere smart packages
 * Git repos (any branch, tag, or even specific revision)
@@ -72,9 +68,97 @@ packages:
         branch: lp:meteor-social
 ```
 
+### On development mode, this app should be run in a certain environment
+
+We can do that.
+
 ### Now it's time to deploy to my server
 
-Yay.
+I'll let you in on a secret, first: `mts deploy` actually runs entirely on your server. If you run it anywhere else, all it does is ssh into your server, go into the configured workspace for your project, and run `mts deploy` there.
+
+As such, only three options are used in the client:
+
+```yaml
+deployment:
+    server: backend1.example.com
+    user: deploybot
+    workspace: /var/lib/meteor-shower/myproject
+```
+
+If you need to specify other ssh options (such as a special key), you'll have to do that in your ~/.ssh/config.
+
+Shower only knows how to deploy from git or bzr. The workspace directory is expected to be a git repo or a bazaar working tree; we figure out which one by checking first for `.bzr` and then `.git`. You don't need to tell Shower the remote, ref, or branch in the yaml file; just set up the workspace so that `bzr up` or `git pull` will do the right thing.
+
+We support three different deployment setups: single-instance (what I guess most people use), dual-instance, and multi-instance. Dual and multi instance provide zero-downtime deployment, and allow you to have a “preview” version of the site with the latest code, that you can use for QA before making it live. Dual should be good enough for all but the largest teams; multi might be good for automatic deployment with large teams, permitting seamless deployment of a new “preview” version without bringing the current preview offline. (Shower doesn't care if you have 3, 4, or 23000 instances; it will deploy to the one with the oldest revision that isn't either the current live or preview.)
+
+Single-instance:
+
+```yaml
+deployment:
+    server: backend1.example.com
+    user: deploybot
+    workspace: /var/lib/meteor-shower/myproject
+    target: /var/meteor/myproject
+```
+
+The actual running instance in this case will be in `/var/meteor/myproject/run`.
+
+Dual or multi:
+
+```yaml
+deployment:
+    server: backend1.example.com
+    user: deploybot
+    workspace: /var/lib/meteor-shower/myproject
+    target: /var/meteor/myproject
+    port_base: 3000
+    instances:
+        - lois
+        - lana
+    instance_control:
+        start: start myproject-$instance
+        stop: stop myproject-$instance
+```
+
+Shower will create two symlinks `live` and `preview` in `/var/meteor/myproject`; those links aren't actually followed by Shower, only used to detect which instances are currently fulfilling each role. However, you're free to use them yourself, for example to point your static webserver (e.g. nginx) to the respective `public` directories.
+
+In the example above, “lois” will run on port 3000, and “lana” on 3010. If unspecified (as for the single-instance example above), it defaults to 3000.
+
+The `instance_control` section above is telling Shower we're using [upstart](http://upstart.ubuntu.com/) to start and stop our instances, with init files named myproject-lois and myproject-lana. If not specified, Shower won't attempt to start or stop instances at all.
+
+To change the live instance, run (on the server or your own machine) `mts release`. That will make “preview” turn into “live”; in a dual-instance setup, “live” becomes “preview”, while in a multi-instance setup, “live” is stopped (if Shower knows how) and “preview” continues to point to the same instance as before (so both “live” and “preview” point to the same instance, which is the expected behaviour since that's the newest code).
+
+#### How do I point my load-balancer to the right port?
+
+If you're using nginx, Shower will do that for you.
+
+```yaml
+deployment:
+    load_balancer:
+        server: frontend1.example.com
+        user: deploybot
+        file: /etc/nginx/upstreams/myproject.conf
+        name: myproject
+        base_address: 10.5.3.23
+```
+
+The `server` and `user` options are not required; if omitted, the load balancer is assumed to run in the same machine as the instances, and no fooling around with ssh has to happen.
+
+If you specify `base_address`, that will be used to connect to the server where the instances are running. You can use that to make use of a faster private network. If omitted, the address in `deployment.server` is used (backend1.example.com in our case).
+
+The file specified there will be managed by Shower and you shouldn't edit it. It will define two upstreams, named in this case myproject-live and myproject-preview; the `name` option is used as a base, and `-live` and `-preview` are appended to that. It defaults to the basename of the deployment workspace.
+
+TODO: document how to use these remotes in an nginx config.
+
+### Do you also autodeploy?
+
+No, but you can. Just run `mts deploy` from a git or bzr hook on your master branch, or from a hook in your continuous integration system upon successful build of a new master revision.
+
+It would also be nice if we could take care of ROOT_URL for multi-instance setups, but that means before releasing, we need to restart preview and wait until it's running.
+
+### Can I use it to run it in my server?
+
+That sounds like a great idea; it could manage your multiple instances, logfiles, etc. Maybe we'll add that.
 
 ### I want to integrate with [RTD](http://xolvio.github.io/rtd/)
 
