@@ -16,11 +16,13 @@ Apart from that, I also needed a good deployment solution. And I figured, since 
 
 ## Status of this document
 
-At the moment, Shower is in alpha stage, so not even all features described in this document are implemented. Here's a quick list (maybe I'll link them to the respective Github issues later):
+At the moment, Shower is in alpha stage, so not even all features described in this document are implemented. “Why did you write, then?” Because I suck at writing documentation *after* the code :-) This is a design technique I like to call “science-fiction design”, where you write the docs first. Approaching it as an user (which I am, if I'm writing something to “scratch an itch”), I lay down the features I want to have, and then I implement them. May sound weird, but works for me.
+
+Here's a quick status checklist (maybe I'll link them to the respective Github issues later):
 
 * Dependency management
   * Fetch packages
-    * git: **in progress**
+    * git: **done**
     * bzr: **not implemented**
     * archive: **not implemented**
     * atmosphere: **not implemented**
