@@ -12,11 +12,11 @@ My main motivation for writing this is so that it's easier to share LimeMakers' 
 
 Sorry, but fetching packages from git HEAD (and having no other option) is just insane. It's nice that it created a convention in the community of keeping their HEAD mostly stable. But what if HEAD happens to be broken? What if I need to pin to a specific tag or revision because, due to time constraints, I can't update my project to the latest Meteor? What if I want to run a package from a branch (e.g. Iron Router from the shark branch)? What if (oh the insanity!) I want to use something other than git?
 
-Apart from that, I also needed a good deployment solution. And I figured, since I need to manage packages in the server as well, these to things belonged together.
+Apart from that, I also needed a good deployment solution. And I figured, since I need to manage packages in the server as well, these two things belonged together.
 
 ## Status of this document
 
-At the moment, Shower is in alpha stage, so not even all features described in this document are implemented. “Why did you write, then?” Because I suck at writing documentation *after* the code :-) This is a design technique I like to call “science-fiction design”, where you write the docs first. Approaching it as an user (which I am, if I'm writing something to “scratch an itch”), I lay down the features I want to have, and then I implement them. May sound weird, but works for me.
+At the moment, Shower is in alpha stage, so not even all features described in this document are implemented. “Why did you write it, then?” Because I suck at writing documentation *after* the code :-) This is a design technique I like to call “science-fiction design”, where you write the docs first. Approaching it as an user (which I am, if I'm writing something to “scratch an itch”), I lay down the features I want to have, and then I implement them. May sound weird, but works for me.
 
 Here's a quick status checklist (maybe I'll link them to the respective Github issues later):
 
@@ -196,7 +196,7 @@ No, but you can. Just run `mts deploy` from a git or bzr hook on your master bra
 
 It would also be nice if we could take care of ROOT_URL for multi-instance setups, but that means before releasing, we need to restart preview and wait until it's running.
 
-### Can I use it to run it in my server?
+### Can I use it to run my app on the server?
 
 That sounds like a great idea; it could manage your multiple instances, logfiles, etc. Maybe we'll add that.
 
