@@ -1,7 +1,35 @@
 {
   "dependencies": {
+    "coffee-script": "~1.4.0",
     "yamljs": "~0.1.4",
     "control": "~0.2.3",
     "shelljs": "~0.2.6"
-  }
+  },
+  "readmeFilename": "README.md",
+  "gitHead": "2211ec68ce63c708b4cb03651a60062ed5f2e33b",
+  "name": "meteor-shower",
+  "description": "a configuration manager and deployment system for Meteor",
+  "homepage": "https://github.com/lalomartins/meteor-shower",
+  "bugs": "https://github.com/lalomartins/meteor-shower/issues",
+  "version": "0.0.1",
+  "preferGlobal": true,
+  "main": "./lib",
+  "bin": {
+    "mts": "mts.sh"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lalomartins/meteor-shower.git"
+  },
+  "keywords": [
+    "meteor",
+    "deployment",
+    "configuration management"
+  ],
+  "author": "Lalo Martins <lalo.martins@gmail.com> (http://lalomartins.info)",
+  "license": "MIT"
 }
