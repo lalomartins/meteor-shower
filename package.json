@@ -1,5 +1,7 @@
 {
   "dependencies": {
-    "yamljs": "~0.1.4"
+    "yamljs": "~0.1.4",
+    "control": "~0.2.3",
+    "shelljs": "~0.2.6"
   }
 }
