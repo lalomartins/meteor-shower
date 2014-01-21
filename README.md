@@ -14,6 +14,20 @@ Sorry, but fetching packages from git HEAD (and having no other option) is just 
 
 Apart from that, I also needed a good deployment solution. And I figured, since I need to manage packages in the server as well, these to things belonged together.
 
+## Status of this document
+
+At the moment, Shower is in alpha stage, so not even all features described in this document are implemented. Here's a quick list (maybe I'll link them to the respective Github issues later):
+
+* Dependency management
+  * Fetch packages
+    * git: **in progress**
+    * bzr: **not implemented**
+    * archive: **not implemented**
+    * atmosphere: **not implemented**
+  * Update packages: **not implemented**
+* Environment management **not implemented**
+* Deployment: **not implemented**
+
 ## I just want to run an app
 
 So you got an app that uses Shower and you just want to install (or update) all dependencies and run it?
