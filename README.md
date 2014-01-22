@@ -27,7 +27,7 @@ Here's a quick status checklist (maybe I'll link them to the respective Github i
     * archive: **not implemented**
     * atmosphere: **not implemented**
   * Update packages: **not implemented**
-* Environment management **not implemented**
+* Environment management **done**
 * Deployment: **not implemented**
 
 ## I just want to run an app
@@ -97,9 +97,9 @@ development:
 
 There are a few variables Shower can expand for you there:
 
-* **PUBLIC_IP**: First non-loopback IP address found in this machine (handy if you frequently need to test your project from other devices, e.g. for mobile development)
-
-(All right, one is not a few. But we're sure we'll need more later.)
+* **PUBLIC_IPV4**: First non-internal IP address found in this machine (handy if you frequently need to test your project from other devices, e.g. for mobile development)
+* **PUBLIC_IPV6**: Same thing, but IPv6.
+* **APP_ROOT**: The directory where your Meteor app is rooted.
 
 So let's try that:
 
@@ -107,7 +107,7 @@ So let's try that:
 development:
     environment:
         MONGO_URL: mongodb://localhost/myproject
-        ROOT_URL: http://${PUBLIC_IP}:3000/
+        ROOT_URL: http://${PUBLIC_IPV4}:3000/
 ```
 
 We're also planning on an interface to specify other things that must also be running (e.g. mongod), but the interface for that isn't defined yet. Ideally we want to detect that it's already running and don't start it in that case; also, when the app stops, we don't necessarily want to stop those.
