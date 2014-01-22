@@ -7,6 +7,8 @@ class RunError extends Error
     constructor: (@message) -> super
     exit_code: 1
 
+global.RunError = RunError
+
 class MeteorApp
     constructor: (@root, extra_conf_path) ->
         console.log "Meteor app at #{@root}"

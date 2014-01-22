@@ -23,9 +23,9 @@ Here's a quick status checklist (maybe I'll link them to the respective Github i
 * Dependency management
   * Fetch packages
     * git: **done**
-    * bzr: **not implemented**
+    * bzr: **done**
     * archive: **not implemented**
-    * atmosphere: **not implemented**
+    * atmosphere: **done**
   * Update packages: **not implemented**
 * Environment management: **done**
 * Deployment: **not implemented**
