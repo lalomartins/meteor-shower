@@ -27,7 +27,7 @@ Here's a quick status checklist (maybe I'll link them to the respective Github i
     * archive: **not implemented**
     * atmosphere: **not implemented**
   * Update packages: **not implemented**
-* Environment management **done**
+* Environment management: **done**
 * Deployment: **not implemented**
 
 ## I just want to run an app
