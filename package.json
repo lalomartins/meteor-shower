@@ -4,8 +4,7 @@
     "yamljs": "~0.1.4",
     "control": "~0.2.3",
     "shelljs": "~0.2.6",
-    "ddp": "~0.4.3",
-    "fibers": "~1.0.1"
+    "ddp": "~0.4.3"
   },
   "readmeFilename": "README.md",
   "gitHead": "2211ec68ce63c708b4cb03651a60062ed5f2e33b",
@@ -13,7 +12,7 @@
   "description": "a configuration manager and deployment system for Meteor",
   "homepage": "https://github.com/limemakers/meteor-shower",
   "bugs": "https://github.com/limemakers/meteor-shower/issues",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "preferGlobal": true,
   "main": "./lib",
   "bin": {
