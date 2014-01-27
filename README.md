@@ -25,7 +25,7 @@ Here's a quick status checklist, with links to the respective Github issues:
     * git: **done**
     * bzr: **done**
     * [archive](https://github.com/LimeMakers/meteor-shower/issues/4): **not implemented**
-    * atmosphere: **done**
+    * atmosphere: **done** (but has [one bug](https://github.com/LimeMakers/meteor-shower/issues/8))
   * Update packages: **done** (except from archive)
 * Environment management: **done**
 * Deployment to own server:
