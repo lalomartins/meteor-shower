@@ -12,7 +12,7 @@
   "description": "a configuration manager and deployment system for Meteor",
   "homepage": "https://github.com/limemakers/meteor-shower",
   "bugs": "https://github.com/limemakers/meteor-shower/issues",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "preferGlobal": true,
   "main": "./lib",
   "bin": {
