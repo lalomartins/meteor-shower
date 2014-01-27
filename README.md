@@ -10,7 +10,7 @@ My main motivation for writing this is so that it's easier to share LimeMakers' 
 
 ### Don't we already have Meteorite?
 
-Sorry, but fetching packages from git HEAD (and having no other option) is just insane. It's nice that it created a convention in the community of keeping their HEAD mostly stable. But what if HEAD happens to be broken? What if I need to pin to a specific tag or revision because, due to time constraints, I can't update my project to the latest Meteor? What if I want to run a package from a branch (e.g. Iron Router from the shark branch)? What if (oh the insanity!) I want to use something other than git?
+Meteorite allows you to install a package from a given tag of a given git repository. That's great for many uses, but not good enough for LimeMakers or my own projects. What if I want to run a package from a branch (e.g. Iron Router from the shark branch)? What if (oh the insanity!) I want to use something other than git?
 
 Apart from that, I also needed a good deployment solution. And I figured, since I need to manage packages in the server as well, these two things belonged together.
 
@@ -25,7 +25,7 @@ Here's a quick status checklist, with links to the respective Github issues:
     * git: **done**
     * bzr: **done**
     * [archive](https://github.com/LimeMakers/meteor-shower/issues/4): **not implemented**
-    * atmosphere: **done** (but has [one bug](https://github.com/LimeMakers/meteor-shower/issues/8))
+    * atmosphere: **done**
   * Update packages: **done** (except from archive)
 * Environment management: **done**
 * Deployment to own server:

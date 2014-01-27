@@ -40,13 +40,21 @@ module.exports = patch: (cls) ->
                         version = options.version or pkg.version
                         for pv in pkg.versions
                             if pv.version is version
-                                shell.exec "git clone --recursive #{pv.git} #{@root}/packages/#{name}"
+                                if fs.existsSync "#{@root}/packages/#{name}"
+                                    shell.pushd "#{@root}/packages/#{name}"
+                                    shell.exec "git pull #{pv.git}"
+                                    shell.exec "git submodule update"
+                                    shell.popd()
+                                else
+                                    shell.exec "git clone --recursive #{pv.git} #{@root}/packages/#{name}"
+                                shell.pushd "#{@root}/packages/#{name}"
+                                shell.exec "git checkout v#{version}"
+                                shell.popd()
                                 deps = []
                                 if pv.packages?
                                     # dependencies
                                     for dep_name, dep_options of pv.packages
-                                        unless fs.existsSync "#{@root}/packages/#{dep_name}"
-                                            deps.push name: dep_name, version: dep_options.version
+                                        deps.push name: dep_name, version: dep_options.version
                                 if deps.length
                                     console.log "installing #{name}'s dependencies: #{deps.join ', '}"
                                     return @_install_deps_from_atmosphere deps, done
@@ -63,19 +71,20 @@ module.exports = patch: (cls) ->
             continuation[package_name] = true
             if fs.existsSync "#{@root}/packages/#{package_name}"
                 switch options.from
-                    when 'git', 'atmosphere'
+                    when 'git'
                         unless shell.which 'git'
                             return done new RunError 'You don\'t seem to have git in your system. Please install it.'
-                        if options.from is 'atmosphere'
-                            console.log '''WARNING: Shower currently doesn't support checking Atmosphere for a changed git
-                            address, because that sounds like a bit of a strange corner case to us. If this
-                            pull fails, you can fix it by deleting the package and running mts again. Also,
-                            please shoot us an email with the package name, to: lalo dot martins at
-                            limemakers dot de.'''
                         shell.pushd "#{@root}/packages/#{package_name}"
                         shell.exec "git pull #{options.remote or 'origin'} #{options.ref or 'master'}"
                         shell.exec "git checkout #{options.ref or 'master'}"
                         shell.popd()
+                    when 'atmosphere'
+                        return @_install_from_atmosphere package_name, options, (err) =>
+                            console.log 'done with Atmosphere, continuing'
+                            if err?
+                                done err
+                            else
+                                @install done, continuation
                     when 'bzr'
                         unless shell.which 'bzr'
                             return done new RunError 'You don\'t seem to have bzr in your system. Please install it.'
