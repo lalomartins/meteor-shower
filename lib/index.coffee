@@ -42,7 +42,11 @@ require('./development').patch MeteorApp
 module.exports =
     MeteorApp: MeteorApp
     RunError: RunError
-    main: ->
+    main: (command = '', args = '') ->
+        if args.length
+            console.error 'No arguments supported at this point.'
+            process.exit 1
+        command = 'run' if command is ''
         try
             meteor_dir = switch
                 when fs.existsSync '.meteor'
@@ -53,8 +57,12 @@ module.exports =
                 else
                     throw new RunError 'No Meteor app found'
             app = new MeteorApp meteor_dir, extra_conf_path
-            # TODO: parse commands
-            app.run()
+            if app[command]?.is_command
+                app[command]()
+            else
+                console.error "No such command: #{command}"
+                process.exit 1
+            fi
         catch e
             if e instanceof RunError
                 console.error e.message

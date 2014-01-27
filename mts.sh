@@ -10,10 +10,15 @@ if ! echo "$NODE_PATH" | grep -q "$LIBDIR"; then
     export NODE_PATH
 fi
 
+if [ "$#" -gt 0 ]; then
+    command="$1"
+    shift
+fi
+
 if which nodejs > /dev/null; then
-    nodejs -e 'require("meteor-shower").main()'
+    nodejs -e "require('meteor-shower').main('$command', '$*')"
 else if which node > /dev/null; then
-    nodejs -e 'require("meteor-shower").main()'
+    nodejs -e "require('meteor-shower').main('$command', '$*')"
 else
     echo "you kind of need node to run this"
 fi fi

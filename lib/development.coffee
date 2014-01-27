@@ -28,3 +28,4 @@ module.exports = patch: (cls) ->
                     shell.env[name] = replace_vars vars, value
             shell.exec 'meteor'
             shell.popd
+    cls::run.is_command = true
