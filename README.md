@@ -220,4 +220,4 @@ No, we won't store your password. I mean, come on, you're going to commit this a
 
 ### I want to integrate with [RTD](http://xolvio.github.io/rtd/)
 
-We don't do that yet, sorry, but it's in the plans. For now, however, you can store you setup.yaml at your project root, and if Shower notices you don't have a `.meteor` around but you do have `app/.meteor`, it will correctly operate inside `app`. So you can manually use both Shower and RTD; just run `mts` first, then stop meteor, and run `rtd`. Except, well, you can use Shower's environment management. Yet.
+We don't do that yet, sorry, but [it's in the plans](https://github.com/LimeMakers/meteor-shower/issues/7). For now, however, you can store you setup.yaml at your project root, and if Shower notices you don't have a `.meteor` around but you do have `app/.meteor`, it will correctly operate inside `app`. So you can manually use both Shower and RTD; just run `mts` first, then stop meteor, and run `rtd`. Except, well, you can use Shower's environment management. Yet.
