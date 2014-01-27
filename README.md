@@ -18,17 +18,20 @@ Apart from that, I also needed a good deployment solution. And I figured, since 
 
 At the moment, Shower is in alpha stage, so not even all features described in this document are implemented. “Why did you write it, then?” Because I suck at writing documentation *after* the code :-) This is a design technique I like to call “science-fiction design”, where you write the docs first. Approaching it as an user (which I am, if I'm writing something to “scratch an itch”), I lay down the features I want to have, and then I implement them. May sound weird, but works for me.
 
-Here's a quick status checklist (maybe I'll link them to the respective Github issues later):
+Here's a quick status checklist, with links to the respective Github issues:
 
 * Dependency management
   * Fetch packages
     * git: **done**
     * bzr: **done**
-    * archive: **not implemented**
+    * [archive](https://github.com/LimeMakers/meteor-shower/issues/4): **not implemented**
     * atmosphere: **done**
   * Update packages: **done** (except from archive)
 * Environment management: **done**
-* Deployment to own server: **not implemented**
+* Deployment to own server:
+    * [Single-instance](https://github.com/LimeMakers/meteor-shower/issues/1): **not implemented**
+    * [Dual-instance](https://github.com/LimeMakers/meteor-shower/issues/2): **not implemented**
+    * [Multi-instance](https://github.com/LimeMakers/meteor-shower/issues/3): **not implemented**
 * Deployment to galaxy/meteor.com: **done**
 
 ## I just want to run an app
