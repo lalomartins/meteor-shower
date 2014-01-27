@@ -48,7 +48,7 @@ Assuming someone in the team already configured the deployment, just `cd myapp; 
 
 ## I want to use it in my app
 
-All right, now we're talking. The one thing you need to know is that all configuration is stored in an [YAML](http://yaml.org/) file, which can be named `setup.yaml`, `.setup.yaml`, or `.meteor/setup.yaml`. (If by mistake you have more than one, they'll be looked up in that order.) It has a few sections: “packages”, “development”, and “deployment”, which by an amazing coincidence correspond to the three sections below.
+All right, now we're talking. The first thing you need to know is that all configuration is stored in an [YAML](http://yaml.org/) file, which can be named `setup.yaml`, `.setup.yaml`, or `.meteor/setup.yaml`. (If by mistake you have more than one, they'll be looked up in that order.) It has a few sections: “packages”, “development”, and “deployment”, which by an amazing coincidence correspond to the three sections below.
 
 What can we help you with?
 
