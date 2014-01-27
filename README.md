@@ -26,7 +26,7 @@ Here's a quick status checklist (maybe I'll link them to the respective Github i
     * bzr: **done**
     * archive: **not implemented**
     * atmosphere: **done**
-  * Update packages: **not implemented**
+  * Update packages: **done** (except from archive)
 * Environment management: **done**
 * Deployment to own server: **not implemented**
 * Deployment to galaxy/meteor.com: **not implemented**

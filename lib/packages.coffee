@@ -14,7 +14,7 @@ module.exports = patch: (cls) ->
             ddpclient.connect (err) =>
                 if err?
                     console.error err
-                    done new RunError 'Failed to connect to Atmosphere'
+                    return done new RunError 'Failed to connect to Atmosphere'
                 else
                     @_atmosphere_client = ddpclient
                     done()
@@ -62,12 +62,35 @@ module.exports = patch: (cls) ->
             continue if continuation[package_name]
             continuation[package_name] = true
             if fs.existsSync "#{@root}/packages/#{package_name}"
-                console.log "#{package_name} already installed; updating not yet implemented"
+                switch options.from
+                    when 'git', 'atmosphere'
+                        unless shell.which 'git'
+                            return done new RunError 'You don\'t seem to have git in your system. Please install it.'
+                        if options.from is 'atmosphere'
+                            console.log '''WARNING: Shower currently doesn't support checking Atmosphere for a changed git
+                            address, because that sounds like a bit of a strange corner case to us. If this
+                            pull fails, you can fix it by deleting the package and running mts again. Also,
+                            please shoot us an email with the package name, to: lalo dot martins at
+                            limemakers dot de.'''
+                        shell.pushd "#{@root}/packages/#{package_name}"
+                        shell.exec "git pull #{options.remote or 'origin'} #{options.ref or 'master'}"
+                        shell.exec "git checkout #{options.ref or 'master'}"
+                        shell.popd()
+                    when 'bzr'
+                        unless shell.which 'bzr'
+                            return done new RunError 'You don\'t seem to have bzr in your system. Please install it.'
+                        shell.pushd "#{@root}/packages/#{package_name}"
+                        shell.exec "bzr pull #{options.branch}"
+                        shell.popd()
+                    when 'archive'
+                        console.log "Sorry, updating from #{options.from} not yet implemented"
+                    else
+                        return done new RunError "Unknown installation method #{options.from}"
             else
                 switch options.from
                     when 'git'
                         unless shell.which 'git'
-                            done new RunError 'You don\'t seem to have git in your system. Please install it.'
+                            return done new RunError 'You don\'t seem to have git in your system. Please install it.'
                         console.log "installing #{package_name} from git: #{options.remote}"
                         shell.exec "git clone --recursive #{options.remote} #{@root}/packages/#{package_name}"
                         if options.ref?
@@ -76,7 +99,7 @@ module.exports = patch: (cls) ->
                             shell.popd()
                     when 'bzr'
                         unless shell.which 'bzr'
-                            done new RunError 'You don\'t seem to have bzr in your system. Please install it.'
+                            return done new RunError 'You don\'t seem to have bzr in your system. Please install it.'
                         console.log "installing #{package_name} from bzr: #{options.branch}"
                         shell.exec "bzr branch #{options.branch} #{@root}/packages/#{package_name}"
                     when 'atmosphere'
@@ -90,5 +113,5 @@ module.exports = patch: (cls) ->
                     when 'archive'
                         console.log "Sorry, installing from #{options.from} not yet implemented"
                     else
-                        done new RunError "Unknown installation method #{options.from}"
+                        return done new RunError "Unknown installation method #{options.from}"
         done()
