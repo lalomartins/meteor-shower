@@ -38,6 +38,7 @@ class MeteorApp
 
 require('./packages').patch MeteorApp
 require('./development').patch MeteorApp
+require('./deployment').patch MeteorApp
 
 module.exports =
     MeteorApp: MeteorApp
@@ -62,7 +63,6 @@ module.exports =
             else
                 console.error "No such command: #{command}"
                 process.exit 1
-            fi
         catch e
             if e instanceof RunError
                 console.error e.message

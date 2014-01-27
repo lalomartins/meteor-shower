@@ -29,7 +29,7 @@ Here's a quick status checklist (maybe I'll link them to the respective Github i
   * Update packages: **done** (except from archive)
 * Environment management: **done**
 * Deployment to own server: **not implemented**
-* Deployment to galaxy/meteor.com: **not implemented**
+* Deployment to galaxy/meteor.com: **done**
 
 ## I just want to run an app
 
