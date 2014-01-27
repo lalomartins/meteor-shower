@@ -18,7 +18,7 @@ fi
 if which nodejs > /dev/null; then
     nodejs -e "require('meteor-shower').main('$command', '$*')"
 else if which node > /dev/null; then
-    nodejs -e "require('meteor-shower').main('$command', '$*')"
+    node -e "require('meteor-shower').main('$command', '$*')"
 else
     echo "you kind of need node to run this"
 fi fi
