@@ -28,7 +28,8 @@ Here's a quick status checklist (maybe I'll link them to the respective Github i
     * atmosphere: **done**
   * Update packages: **not implemented**
 * Environment management: **done**
-* Deployment: **not implemented**
+* Deployment to own server: **not implemented**
+* Deployment to galaxy/meteor.com: **not implemented**
 
 ## I just want to run an app
 
@@ -199,6 +200,20 @@ It would also be nice if we could take care of ROOT_URL for multi-instance setup
 ### Can I use it to run my app on the server?
 
 That sounds like a great idea; it could manage your multiple instances, logfiles, etc. Maybe we'll add that.
+
+### That's great, but I'm running it on myapp.meteor.com.
+
+Well then you're good, aren't you? :-)
+
+Still, if you want to save a few keystrokes, or not bother to remember the whole domain every time you deploy, you can use `mts deploy` anyway.
+
+```yaml
+deployment:
+    server: myapp.meteor.com
+    method: galaxy
+```
+
+No, we won't store your password. I mean, come on, you're going to commit this and keep it in a (possibly public) repository somewhere, right? So you still have to type your password. Natch.
 
 ### I want to integrate with [RTD](http://xolvio.github.io/rtd/)
 
