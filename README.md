@@ -198,11 +198,11 @@ TODO: document how to use these remotes in an nginx config.
 
 No, but you can. Just run `mts deploy` from a git or bzr hook on your master branch, or from a hook in your continuous integration system upon successful build of a new master revision.
 
-It would also be nice if we could take care of ROOT_URL for multi-instance setups, but that means before releasing, we need to restart preview and wait until it's running.
-
 ### Can I use it to run my app on the server?
 
 That sounds like a great idea; it could manage your multiple instances, logfiles, etc. Maybe we'll add that.
+
+It would also be nice if we could take care of ROOT_URL for multi-instance setups, but that means before releasing, we need to restart preview and wait until it's running.
 
 ### That's great, but I'm running it on myapp.meteor.com.
 
