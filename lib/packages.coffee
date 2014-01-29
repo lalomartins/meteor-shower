@@ -42,13 +42,13 @@ module.exports = patch: (cls) ->
                             if pv.version is version
                                 if fs.existsSync "#{@root}/packages/#{name}"
                                     shell.pushd "#{@root}/packages/#{name}"
-                                    shell.exec "git pull #{pv.git}"
-                                    shell.exec "git submodule update"
+                                    shell.exec "git fetch #{pv.git}"
                                     shell.popd()
                                 else
                                     shell.exec "git clone --recursive #{pv.git} #{@root}/packages/#{name}"
                                 shell.pushd "#{@root}/packages/#{name}"
                                 shell.exec "git checkout v#{version}"
+                                shell.exec "git submodule update"
                                 shell.popd()
                                 deps = []
                                 if pv.packages?
