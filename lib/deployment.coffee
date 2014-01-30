@@ -1,5 +1,6 @@
 child_process = require 'child_process'
 os = require 'os'
+control = require 'control'
 shell = require 'shelljs'
 
 module.exports = patch: (cls) ->
@@ -13,7 +14,10 @@ module.exports = patch: (cls) ->
                 # can't use shell.exec for this due to password input
                 child_process.spawn 'meteor', ['deploy', @config.deployment.server], {stdio: 'inherit'}
             when 'mts', undefined
-                throw new RunError 'Sorry, deployment with server-side mts not yet implemented.'
+                controller = Object.create control.controller
+                controller.address = @config.deployment.server
+                controller.user = @config.deployment.user
+                controller.ssh "cd \"#{@config.deployment.workspace}\" && mts deploy"
             else
                 throw new RunError "Unknown deployment method #{@config.deployment.method}"
     cls::deploy.is_command = true
