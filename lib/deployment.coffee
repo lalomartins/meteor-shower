@@ -28,6 +28,7 @@ module.exports = patch: (cls) ->
 
     cls::deploy_at_server = ->
         @deployment ?= {}
+        @deployment.instance ?= 'run'
         switch
             when fs.existsSync "#{@root}/.bzr"
                 shell.pushd @root
@@ -55,10 +56,15 @@ module.exports = patch: (cls) ->
             console.log "meteor bundle #{@config.deployment.target}/_bundles/#{@deployment.revision}.tar.gz"
             # async because shelljs' docs tell us to use async for long-running
             # processes, or it uses too much cpu waiting
-            shell.exec "meteor bundle #{@config.deployment.target}/_bundles/#{@deployment.revision}.tar.gz", (code, output) ->
+            shell.exec "meteor bundle #{@config.deployment.target}/_bundles/#{@deployment.revision}.tar.gz", (code, output) =>
+                shell.popd()
                 if code
                     throw new RunError "meteor bundle failed with error code #{code}"
 
-
-
+                shell.mkdir '-p', "#{@config.deployment.target}/_tree/#{@deployment.revision}"
+                shell.pushd "#{@config.deployment.target}"
+                shell.exec "tar -C _tree/#{@deployment.revision} --strip-components=1 -xf _bundles/#{@deployment.revision}.tar.gz"
+                # shelljs master has ln, but no release yet does
+                # shell.ln '-fs', "_tree/#{@deployment.revision}", @deployment.instance
+                shell.exec "ln -fs _tree/#{@deployment.revision} #{@deployment.instance}"
                 process.exit 0
