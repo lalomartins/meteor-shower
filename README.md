@@ -160,8 +160,8 @@ deployment:
         - lois
         - lana
     instance_control:
-        start: start myproject-$instance
-        stop: stop myproject-$instance
+        start: sudo start myproject-${instance}
+        stop: sudo stop myproject-${instance}
 ```
 
 Shower will create two symlinks `live` and `preview` in `/var/meteor/myproject`; those links aren't actually followed by Shower, only used to detect which instances are currently fulfilling each role. However, you're free to use them yourself, for example to point your static webserver (e.g. nginx) to the respective `public` directories.
