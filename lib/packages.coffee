@@ -80,7 +80,6 @@ module.exports = patch: (cls) ->
                         shell.popd()
                     when 'atmosphere'
                         return @_install_from_atmosphere package_name, options, (err) =>
-                            console.log 'done with Atmosphere, continuing'
                             if err?
                                 done err
                             else
@@ -114,7 +113,6 @@ module.exports = patch: (cls) ->
                     when 'atmosphere'
                         console.log "installing #{package_name} from atmosphere"
                         return @_install_from_atmosphere package_name, options, (err) =>
-                            console.log 'done with Atmosphere, continuing'
                             if err?
                                 done err
                             else
