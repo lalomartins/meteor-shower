@@ -29,7 +29,7 @@ Here's a quick status checklist, with links to the respective Github issues:
   * Update packages: **done** (except from archive)
 * Environment management: **done**
 * Deployment to own server:
-    * [Single-instance](https://github.com/LimeMakers/meteor-shower/issues/1): **not implemented**
+    * [Single-instance](https://github.com/LimeMakers/meteor-shower/issues/1): **done**
     * [Dual-instance](https://github.com/LimeMakers/meteor-shower/issues/2): **not implemented**
     * [Multi-instance](https://github.com/LimeMakers/meteor-shower/issues/3): **not implemented**
 * Deployment to galaxy/meteor.com: **done**
