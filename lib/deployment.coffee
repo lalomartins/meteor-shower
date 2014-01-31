@@ -73,5 +73,5 @@ module.exports = patch: (cls) ->
                 shell.exec "tar -C _tree/#{@deployment.revision} --strip-components=1 -xf _bundles/#{@deployment.revision}.tar.gz"
                 # shelljs master has ln, but no release yet does
                 # shell.ln '-fs', "_tree/#{@deployment.revision}", @deployment.instance
-                shell.exec "ln -fs _tree/#{@deployment.revision} #{@deployment.instance}"
+                shell.exec "ln -fsT _tree/#{@deployment.revision} #{@deployment.instance}"
                 process.exit 0
