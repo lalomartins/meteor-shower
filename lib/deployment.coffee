@@ -2,6 +2,7 @@ child_process = require 'child_process'
 fs = require 'fs'
 os = require 'os'
 control = require 'control'
+pidlock = require 'pidlock'
 shell = require 'shelljs'
 
 module.exports = patch: (cls) ->
@@ -16,7 +17,13 @@ module.exports = patch: (cls) ->
                 child_process.spawn 'meteor', ['deploy', @config.deployment.server], {stdio: 'inherit'}
             when 'mts', undefined
                 if (@root is @config.deployment.workspace) and (fs.existsSync(@config.deployment.target)) and process.env.USER is @config.deployment.user
-                    @deploy_at_server()
+                    pidlock.guard @config.deployment.target, '_deploying.lock', (error, data, cleanup) =>
+                        if error?
+                            throw new RunError 'A deployment is already in progress.'
+                        process.on 'exit', =>
+                            cleanup()
+                            shell.rm '-rf', "#{@config.deployment.target}/deploying.lock"
+                        @deploy_at_server()
                 else
                     controller = Object.create control.controller
                     controller.address = @config.deployment.server

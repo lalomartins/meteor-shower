@@ -4,7 +4,8 @@
     "yamljs": "~0.1.4",
     "control": "~0.2.3",
     "shelljs": "~0.2.6",
-    "ddp": "~0.4.3"
+    "ddp": "~0.4.3",
+    "pidlock": "~0.1.0"
   },
   "readmeFilename": "README.md",
   "gitHead": "2211ec68ce63c708b4cb03651a60062ed5f2e33b",
