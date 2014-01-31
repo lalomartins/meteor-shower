@@ -33,9 +33,30 @@ module.exports = patch: (cls) ->
                 throw new RunError "Unknown deployment method #{@config.deployment.method}"
     cls::deploy.is_command = true
 
+    cls::get_deployment_instance = ->
+        switch @config.deployment.instances?.length
+            when undefined
+                'run'
+            when 1
+                @config.deployment.instances[0]
+            when 2
+                switch
+                    when fs.existsSync "#{@config.deployment.target}/preview"
+                        fs.readlinkSync "#{@config.deployment.target}/preview"
+                    when fs.existsSync "#{@config.deployment.target}/live"
+                        live = fs.readlinkSync "#{@config.deployment.target}/live"
+                        if @config.deployment.instances[0] is live
+                            @config.deployment.instances[1]
+                        else
+                            @config.deployment.instances[0]
+                    else
+                        @config.deployment.instances[0]
+            else
+                throw new RunError 'Multi-instance deployment not yet implemented'
+
     cls::deploy_at_server = ->
         @deployment ?= {}
-        @deployment.instance ?= 'run'
+        @deployment.instance ?= @get_deployment_instance()
         switch
             when fs.existsSync "#{@root}/.bzr"
                 shell.pushd @root
@@ -74,4 +95,6 @@ module.exports = patch: (cls) ->
                 # shelljs master has ln, but no release yet does
                 # shell.ln '-fs', "_tree/#{@deployment.revision}", @deployment.instance
                 shell.exec "ln -fsT _tree/#{@deployment.revision} #{@deployment.instance}"
+                if @config.deployment.instances?.length
+                    shell.exec "ln -fsT #{@deployment.instance} preview"
                 process.exit 0
