@@ -145,7 +145,7 @@ deployment:
     target: /var/meteor/myproject
 ```
 
-The actual running instance in this case will be in `/var/meteor/myproject/run`.
+The actual running instance in this case will be in `/var/meteor/myproject/run`. (If you don't want your single instance to be named `run`, you can give it a name using the instance property, as you'll see below.)
 
 Dual or multi:
 
