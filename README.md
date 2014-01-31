@@ -155,7 +155,6 @@ deployment:
     user: deploybot
     workspace: /var/lib/meteor-shower/myproject
     target: /var/meteor/myproject
-    port_base: 3000
     instances:
         - lois
         - lana
@@ -165,8 +164,6 @@ deployment:
 ```
 
 Shower will create two symlinks `live` and `preview` in `/var/meteor/myproject`; those links aren't actually followed by Shower, only used to detect which instances are currently fulfilling each role. However, you're free to use them yourself, for example to point your static webserver (e.g. nginx) to the respective `public` directories.
-
-In the example above, “lois” will run on port 3000, and “lana” on 3010. If unspecified (as for the single-instance example above), it defaults to 3000.
 
 The `instance_control` section above is telling Shower we're using [upstart](http://upstart.ubuntu.com/) to start and stop our instances, with init files named myproject-lois and myproject-lana. If not specified, Shower won't attempt to start or stop instances at all.
 
@@ -184,11 +181,14 @@ deployment:
         file: /etc/nginx/upstreams/myproject.conf
         name: myproject
         base_address: 10.5.3.23
+        base_port: 3000
 ```
 
 The `server` and `user` options are not required; if omitted, the load balancer is assumed to run in the same machine as the instances, and no fooling around with ssh has to happen.
 
 If you specify `base_address`, that will be used to connect to the server where the instances are running. You can use that to make use of a faster private network. If omitted, the address in `deployment.server` is used (backend1.example.com in our case).
+
+Shower expects your instances to run in ports with an offset of 10, with the first being `base_port` (default 3000); so base_port is the first instance in the order specified in `instances`, base_port+10 is the second, and so on.
 
 The file specified there will be managed by Shower and you shouldn't edit it. It will define two upstreams, named in this case myproject-live and myproject-preview; the `name` option is used as a base, and `-live` and `-preview` are appended to that. It defaults to the basename of the deployment workspace.
 
