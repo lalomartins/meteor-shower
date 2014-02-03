@@ -86,7 +86,7 @@ module.exports = patch: (cls) ->
                 controller.address = @config.deployment.load_balancer.server
                 controller.user = @config.deployment.load_balancer.user ? @config.deployment.user
                 upstreams.to "#{@config.deployment.target}/.mts-upstreams.tmp"
-                controller.scp "#{@config.deployment.target}/.mts-upstreams.tmp", @config.deployment.load_balancer.file, ->
+                controller.scp "#{@config.deployment.target}/.mts-upstreams.tmp", @config.deployment.load_balancer.file, =>
                     shell.rm "#{@config.deployment.target}/.mts-upstreams.tmp"
                     controller.ssh 'sudo nginx -t && sudo nginx -s reload', finished
 
