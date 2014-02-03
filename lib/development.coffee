@@ -26,6 +26,6 @@ module.exports = patch: (cls) ->
                     break if vars.PUBLIC_IPV4? and vars.PUBLIC_IPV6?
                 for name, value of @config.development.environment
                     shell.env[name] = replace_vars vars, value
-            shell.exec 'meteor'
+            shell.exec 'meteor', async: true
             shell.popd
     cls::run.is_command = true
