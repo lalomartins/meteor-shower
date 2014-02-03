@@ -158,6 +158,14 @@ module.exports = patch: (cls) ->
                     controller = Object.create control.controller
                     controller.address = @config.deployment.server
                     controller.user = @config.deployment.user
+                    # hack, but it's ATM the only way to shut control up
+                    controller.logBuffer = (prefix, buffer) ->
+                        if prefix is 'stdout: '
+                            process.stdout.write buffer
+                        else
+                            control.controller.logBuffer.call controller, prefix, buffer
+                    # controller.stdout.on 'data', (chunk) ->
+                    #     process.stdout.write chunk
                     controller.ssh "cd \"#{@config.deployment.workspace}\" && mts status"
             else
                 throw new RunError "Unknown deployment method #{@config.deployment.method}"
