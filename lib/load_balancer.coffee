@@ -45,6 +45,10 @@ module.exports = patch: (cls) ->
             shell.exec "ln -fsT #{new_preview} preview"
         else
             new_preview = state.preview.name
+            if @config.deployment.instance_control?.stop?
+                finished = =>
+                    console.log @config.deployment.instance_control.stop.replace /\$\{instance\}/g, state.live.name
+                    shell.exec @config.deployment.instance_control.stop.replace /\$\{instance\}/g, state.live.name
         shell.exec "ln -fsT #{new_live} live"
         shell.popd
 
@@ -72,12 +76,15 @@ module.exports = patch: (cls) ->
             """
 
             if @config.deployment.load_balancer.server?
-                console.log 'fool around with ssh'
+                controller = Object.create control.controller
+                controller.address = @config.deployment.load_balancer.server
+                controller.user = @config.deployment.load_balancer.user ? @config.deployment.user
+                upstreams.to "#{@config.deployment.target}/.mts-upstreams.tmp"
+                controller.scp "#{@config.deployment.target}/.mts-upstreams.tmp", @config.deployment.load_balancer.file, ->
+                    shell.rm "#{@config.deployment.target}/.mts-upstreams.tmp"
+                    controller.ssh 'sudo nginx -t && sudo nginx -s reload', finished
 
             else
                 upstreams.to @config.deployment.load_balancer.file
                 shell.exec 'sudo nginx -t && sudo nginx -s reload'
-
-        if @config.deployment.instances.length > 2 and @config.deployment.instance_control?.stop?
-            console.log @config.deployment.instance_control.stop.replace /\$\{instance\}/g, state.live.name
-            shell.exec @config.deployment.instance_control.stop.replace /\$\{instance\}/g, state.live.name
+                finished?()
