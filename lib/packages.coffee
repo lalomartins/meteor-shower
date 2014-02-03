@@ -66,27 +66,33 @@ module.exports = patch: (cls) ->
     cls::install = (done, continuation) ->
         return done() unless @config.packages?
         continuation ?= {}
+        console.debug "in install; #{Object.keys(@config.packages).length - Object.keys(continuation).length} packgages left"
         for package_name, options of @config.packages
             continue if continuation[package_name]
             continuation[package_name] = true
+            console.debug "installing #{package_name}"
             if fs.existsSync "#{@root}/packages/#{package_name}"
                 switch options.from
                     when 'git'
                         unless shell.which 'git'
                             return done new RunError 'You don\'t seem to have git in your system. Please install it.'
+                        console.log "updating #{package_name} from git: #{options.remote}"
                         shell.pushd "#{@root}/packages/#{package_name}"
                         shell.exec "git pull #{options.remote or 'origin'} #{options.ref or 'master'}"
                         shell.exec "git checkout #{options.ref or 'master'}"
                         shell.popd()
                     when 'atmosphere'
+                        console.log "updating #{package_name} from atmosphere"
                         return @_install_from_atmosphere package_name, options, (err) =>
                             if err?
                                 done err
                             else
+                                console.debug 'done with atmosphere, continuing'
                                 @install done, continuation
                     when 'bzr'
                         unless shell.which 'bzr'
                             return done new RunError 'You don\'t seem to have bzr in your system. Please install it.'
+                        console.log "updating #{package_name} from bzr: #{options.branch}"
                         shell.pushd "#{@root}/packages/#{package_name}"
                         shell.exec "bzr pull #{options.branch}"
                         shell.popd()
@@ -116,6 +122,7 @@ module.exports = patch: (cls) ->
                             if err?
                                 done err
                             else
+                                console.debug 'done with atmosphere, continuing'
                                 @install done, continuation
                     when 'archive'
                         console.log "Sorry, installing from #{options.from} not yet implemented"

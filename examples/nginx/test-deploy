@@ -1,0 +1,63 @@
+include upstreams/myproject.conf;
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name test-deploy-live;
+
+    # enable gzip
+    gzip on;
+    gzip_comp_level 6;
+    gzip_vary on;
+    gzip_min_length  1000;
+    gzip_proxied any;
+    gzip_buffers 16 8k;
+
+    # we only gzip these mime-types (since there's no use to gzip jpegs)
+    gzip_types text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript;
+
+    location / {
+        proxy_redirect off;
+        proxy_http_version 1.1;
+        proxy_set_header   Upgrade $http_upgrade;
+        proxy_set_header   Connection "upgrade";
+        proxy_set_header   X-Real-IP $remote_addr;
+        proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Forwarded-Proto $scheme;
+        proxy_set_header   Host $http_host;
+        proxy_set_header   X-NginX-Proxy true;
+        proxy_pass_header  Server;
+        proxy_pass         http://myproject-live;
+    }
+}
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name test-deploy-preview;
+
+    # enable gzip
+    gzip on;
+    gzip_comp_level 6;
+    gzip_vary on;
+    gzip_min_length  1000;
+    gzip_proxied any;
+    gzip_buffers 16 8k;
+
+    # we only gzip these mime-types (since there's no use to gzip jpegs)
+    gzip_types text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript;
+
+    location / {
+        proxy_redirect off;
+        proxy_http_version 1.1;
+        proxy_set_header   Upgrade $http_upgrade;
+        proxy_set_header   Connection "upgrade";
+        proxy_set_header   X-Real-IP $remote_addr;
+        proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Forwarded-Proto $scheme;
+        proxy_set_header   Host $http_host;
+        proxy_set_header   X-NginX-Proxy true;
+        proxy_pass_header  Server;
+        proxy_pass         http://myproject-preview;
+    }
+}

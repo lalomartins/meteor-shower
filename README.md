@@ -30,7 +30,7 @@ Here's a quick status checklist, with links to the respective Github issues:
 * Environment management: **done**
 * Deployment to own server:
     * [Single-instance](https://github.com/LimeMakers/meteor-shower/issues/1): **done**
-    * [Dual-instance](https://github.com/LimeMakers/meteor-shower/issues/2): **not implemented**
+    * [Dual-instance](https://github.com/LimeMakers/meteor-shower/issues/2): **done**
     * [Multi-instance](https://github.com/LimeMakers/meteor-shower/issues/3): **not implemented**
 * Deployment to galaxy/meteor.com: **done**
 
@@ -192,7 +192,7 @@ Shower expects your instances to run in ports with an offset of 10, with the fir
 
 The file specified there will be managed by Shower and you shouldn't edit it. It will define two upstreams, named in this case myproject-live and myproject-preview; the `name` option is used as a base, and `-live` and `-preview` are appended to that. It defaults to the basename of the deployment workspace.
 
-TODO: document how to use these remotes in an nginx config.
+Look in examples/nginx for a sample nginx config file using those upstreams.
 
 ### Do you also autodeploy?
 

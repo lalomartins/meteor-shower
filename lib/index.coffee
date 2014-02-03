@@ -9,6 +9,11 @@ class RunError extends Error
 
 global.RunError = RunError
 
+if process.env.MTS_DEBUG?.length
+    console.debug = console.log
+else
+    console.debug = ->
+
 class MeteorApp
     constructor: (@root, extra_conf_path) ->
         console.log "Meteor app at #{@root}"
@@ -39,6 +44,7 @@ class MeteorApp
 require('./packages').patch MeteorApp
 require('./development').patch MeteorApp
 require('./deployment').patch MeteorApp
+require('./load_balancer').patch MeteorApp
 
 module.exports =
     MeteorApp: MeteorApp

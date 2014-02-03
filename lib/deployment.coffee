@@ -41,18 +41,49 @@ module.exports = patch: (cls) ->
                 @config.deployment.instances[0]
             when 2
                 switch
-                    when fs.existsSync "#{@config.deployment.target}/preview"
-                        fs.readlinkSync "#{@config.deployment.target}/preview"
                     when fs.existsSync "#{@config.deployment.target}/live"
                         live = fs.readlinkSync "#{@config.deployment.target}/live"
                         if @config.deployment.instances[0] is live
                             @config.deployment.instances[1]
                         else
                             @config.deployment.instances[0]
+                    when fs.existsSync "#{@config.deployment.target}/preview"
+                        # not that sure about this… if there's no live ATM,
+                        # maybe better to deploy to the other one?
+                        fs.readlinkSync "#{@config.deployment.target}/preview"
                     else
                         @config.deployment.instances[0]
             else
                 throw new RunError 'Multi-instance deployment not yet implemented'
+
+    cls::get_deployment_state = ->
+        # MAYBE: redefine get_deployment_instance() in terms of this
+        unless @config.deployment? and (@config.deployment.method is 'mts' or @config.deployment.method is undefined)
+            throw new RunError 'Meteor Shower isn\'t managing this deployment'
+        instances = {}
+        switch @config.deployment.instances?.length
+            when undefined
+                instances.live =
+                    name: 'run'
+            when 1
+                instances.live =
+                    name: @config.deployment.instances[0]
+            when 2
+                if fs.existsSync "#{@config.deployment.target}/live"
+                    instances.live =
+                        name: fs.readlinkSync "#{@config.deployment.target}/live"
+                if fs.existsSync "#{@config.deployment.target}/preview"
+                    instances.preview =
+                        name: fs.readlinkSync "#{@config.deployment.target}/preview"
+            else
+                throw new RunError 'Multi-instance deployment not yet implemented'
+        for role, info of instances
+            continue unless info?
+            info.tree_path = fs.readlinkSync "#{@config.deployment.target}/#{info.name}"
+            info.revision = info.tree_path.replace(/^_tree\//, '').replace(/-at-/, '@')
+            stats = fs.statSync "#{@config.deployment.target}/#{info.tree_path}"
+            info.deploy_date = stats.ctime
+        instances
 
     cls::deploy_at_server = ->
         @deployment ?= {}
@@ -61,8 +92,8 @@ module.exports = patch: (cls) ->
             when fs.existsSync "#{@root}/.bzr"
                 shell.pushd @root
                 shell.exec 'bzr up'
-                @deployment.revision = shell.exec('bzr revision-info').output.trim().split(' ')[1].replace '@', '-at-'
-                console.log "revision: #{@deployment.revision}"
+                @deployment.revision = shell.exec('bzr revision-info', silent: true).output.trim().split(' ')[1].replace '@', '-at-'
+                console.log "deploying revision: #{@deployment.revision}"
                 shell.popd
                 @deployment_vcs = 'bzr'
             when fs.existsSync "#{@root}/.git"
@@ -75,6 +106,7 @@ module.exports = patch: (cls) ->
                 throw new RunError 'Workspace must be a Bazaar working tree or Git repo'
 
         @install (err) =>
+            console.debug 'done with install'
             throw err if err?
 
             shell.mkdir '-p', "#{@config.deployment.target}/_bundles"
@@ -104,3 +136,40 @@ module.exports = patch: (cls) ->
                 if @config.deployment.instances?.length
                     shell.exec "ln -fsT #{@deployment.instance} preview"
                 process.exit 0
+
+
+    ########## Status
+    cls::status = ->
+        unless @config.deployment?
+            throw new RunError 'I don\'t know how to deploy your project. Create a "deployment" section in your setup file.'
+        switch @config.deployment.method
+            when 'galaxy'
+                console.log "Deploying with galaxy to #{config.deployment.server}"
+            when 'mts', undefined
+                if (@root is @config.deployment.workspace) and (fs.existsSync(@config.deployment.target)) and process.env.USER is @config.deployment.user
+                    pidlock.guard @config.deployment.target, '_deploying.lock', (error, data, cleanup) =>
+                        if error?
+                            throw new RunError 'A deployment is currently in progress.'
+                        process.on 'exit', =>
+                            cleanup()
+                            shell.rm '-rf', "#{@config.deployment.target}/deploying.lock"
+                        @status_at_server()
+                else
+                    controller = Object.create control.controller
+                    controller.address = @config.deployment.server
+                    controller.user = @config.deployment.user
+                    controller.ssh "cd \"#{@config.deployment.workspace}\" && mts status"
+            else
+                throw new RunError "Unknown deployment method #{@config.deployment.method}"
+    cls::status.is_command = true
+
+    cls::status_at_server = ->
+        state = @get_deployment_state()
+        if Object.keys(state).length is 0
+            console.log 'No deployments found'
+        else
+            for role, info of state
+                console.log """
+                current #{role}: #{info.name}
+                    revision: #{info.revision}
+                    deployed: #{info.deploy_date}"""
