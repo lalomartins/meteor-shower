@@ -41,7 +41,13 @@ module.exports = patch: (cls) ->
         shell.pushd @config.deployment.target
         new_live = state.preview.name
         if @config.deployment.instances.length is 2
-            new_preview = state.live.name
+            if state.live?
+                new_preview = state.live.name
+            else
+                for instance in @config.deployment.instances
+                    if instance isnt new_live
+                        new_preview = instance
+                        break
             shell.exec "ln -fsT #{new_preview} preview"
         else
             new_preview = state.preview.name
