@@ -24,9 +24,8 @@ Here's a quick status checklist, with links to the respective Github issues:
   * Fetch packages
     * git: **done**
     * bzr: **done**
-    * [archive](https://github.com/LimeMakers/meteor-shower/issues/4): **not implemented**
     * atmosphere: **done**
-  * Update packages: **done** (except from archive)
+  * Update packages: **done**
 * Environment management: **done**
 * Deployment to own server:
     * [Single-instance](https://github.com/LimeMakers/meteor-shower/issues/1): **done**
@@ -58,10 +57,9 @@ No problem. We can get packages as:
 
 * Atmosphere smart packages
 * Git repos (any branch, tag, or even specific revision)
-* Archives (tar, tar.gz, tar.bz2, tar.lzma, zip, rar, 7z) from a given http/https URL
 * Bazaar repos (tip of any given branch)
 
-The example below has one of each:
+The example below has two of each, and all available options:
 
 ```yaml
 packages:
@@ -77,9 +75,6 @@ packages:
         from: git
         remote: https://github.com/EventedMind/iron-router.git
         ref: shark
-    lm-shared-models:
-        from: archive
-        url: http://our-internal-server.local/packages/shared-models-r23.7z
     lm-some-other-stuff:
         from: bzr
         branch: bzr+ssh://bzr@bzr.limemakers.de/bzr/some-other-stuff/master
