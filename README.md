@@ -220,3 +220,7 @@ We don't do that yet, sorry, but [it's in the plans](https://github.com/LimeMake
 ## Gotchas
 
 When you run `mts deploy` with a remote server, it will use the configuration from the latest deployed revision. So if your changes include updates to the Shower configuration, you might need to deploy twice to pick them up.
+
+## Thanks
+
+Development of Meteor Shower up to version 1.0 was sponsored by [LimeMakers](http://limemakers.de). They use Meteor for the main application, as well as the internal admin tool. It's a cool place to work; if they happen to be hiring at the time you read this, please consider applying.
