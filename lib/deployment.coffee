@@ -28,6 +28,9 @@ module.exports = patch: (cls) ->
                     controller = Object.create control.controller
                     controller.address = @config.deployment.server
                     controller.user = @config.deployment.user
+                    # agent forwarding is probably needed to talk to bzr+ssh
+                    # or github or load balancer etc
+                    controller.sshOptions = ['-A']
                     controller.ssh "cd \"#{@config.deployment.workspace}\" && mts deploy"
             else
                 throw new RunError "Unknown deployment method #{@config.deployment.method}"

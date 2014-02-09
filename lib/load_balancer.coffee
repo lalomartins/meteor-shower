@@ -28,6 +28,7 @@ module.exports = patch: (cls) ->
                     controller = Object.create control.controller
                     controller.address = @config.deployment.server
                     controller.user = @config.deployment.user
+                    controller.sshOptions = ['-A']
                     controller.ssh "cd \"#{@config.deployment.workspace}\" && mts release"
             else
                 throw new RunError "Unknown deployment method #{@config.deployment.method}"
@@ -61,14 +62,14 @@ module.exports = patch: (cls) ->
         lb_config = @config.deployment.load_balancer
         if lb_config?
             lb_config.base_address ?= @config.deployment.server
-            lb_config.base_port ?= '3000'
+            lb_config.base_port ?= 3000
             lb_config.name ?= path.basename @config.deployment.workspace
 
             for name, index in @config.deployment.instances
                 if name is new_live
-                    live_port = lb_config.base_port + 10 * index
+                    live_port = Number(lb_config.base_port) + 10 * index
                 if name is new_preview
-                    preview_port = lb_config.base_port + 10 * index
+                    preview_port = Number(lb_config.base_port) + 10 * index
 
             upstreams = """
             upstream #{lb_config.name}-live {
