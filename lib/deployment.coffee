@@ -138,7 +138,57 @@ module.exports = patch: (cls) ->
                     shell.exec @config.deployment.instance_control.start.replace /\$\{instance\}/g, @deployment.instance
                 if @config.deployment.instances?.length
                     shell.exec "ln -fsT #{@deployment.instance} preview"
+
+                @clean_at_server()
                 process.exit 0
+
+
+    ########## Clean
+    cls::clean = ->
+        unless @config.deployment?
+            throw new RunError 'I don\'t know how to deploy your project. Create a "deployment" section in your setup file.'
+        switch @config.deployment.method
+            when 'galaxy'
+                console.log "Sorry, clean makes no sense with galaxy deployment"
+            when 'mts', undefined
+                if (@root is @config.deployment.workspace) and (fs.existsSync(@config.deployment.target)) and process.env.USER is @config.deployment.user
+                    pidlock.guard @config.deployment.target, '_deploying.lock', (error, data, cleanup) =>
+                        if error?
+                            throw new RunError 'A deployment is currently in progress.'
+                        process.on 'exit', =>
+                            cleanup()
+                            shell.rm '-rf', "#{@config.deployment.target}/deploying.lock"
+                        @clean_at_server()
+                else
+                    controller = Object.create control.controller
+                    controller.address = @config.deployment.server
+                    controller.user = @config.deployment.user
+                    # hack, but it's ATM the only way to shut control up
+                    controller.logBuffer = (prefix, buffer) ->
+                        if prefix is 'stdout: '
+                            process.stdout.write buffer
+                        else
+                            control.controller.logBuffer.call controller, prefix, buffer
+                    # controller.stdout.on 'data', (chunk) ->
+                    #     process.stdout.write chunk
+                    controller.ssh "cd \"#{@config.deployment.workspace}\" && mts clean"
+            else
+                throw new RunError "Unknown deployment method #{@config.deployment.method}"
+    cls::clean.is_command = true
+
+    cls::clean_at_server = ->
+        in_use = []
+        for name in fs.readdirSync @config.deployment.target
+            try
+                target = fs.readlinkSync "#{@config.deployment.target}/#{name}"
+            catch error
+                continue if error.code is 'EINVAL'
+                throw error
+            if match = target.match /^_tree\/([^\/]+)/
+                in_use.push match[1]
+        for name in fs.readdirSync "#{@config.deployment.target}/_tree"
+            unless name in in_use
+                shell.rm '-rf', "#{@config.deployment.target}/_tree/#{name}"
 
 
     ########## Status
