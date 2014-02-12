@@ -14,25 +14,6 @@ Meteorite allows you to install a package from a given tag of a given git reposi
 
 Apart from that, I also needed a good deployment solution. And I figured, since I need to manage packages in the server as well, these two things belonged together.
 
-## Status of this document
-
-At the moment, Shower is in alpha stage, so not even all features described in this document are implemented. “Why did you write it, then?” Because I suck at writing documentation *after* the code :-) This is a design technique I like to call “science-fiction design”, where you write the docs first. Approaching it as an user (which I am, if I'm writing something to “scratch an itch”), I lay down the features I want to have, and then I implement them. May sound weird, but works for me.
-
-Here's a quick status checklist, with links to the respective Github issues:
-
-* Dependency management
-  * Fetch packages
-    * git: **done**
-    * bzr: **done**
-    * atmosphere: **done**
-  * Update packages: **done**
-* Environment management: **done**
-* Deployment to own server:
-    * [Single-instance](https://github.com/LimeMakers/meteor-shower/issues/1): **done**
-    * [Dual-instance](https://github.com/LimeMakers/meteor-shower/issues/2): **done**
-    * [Multi-instance](https://github.com/LimeMakers/meteor-shower/issues/3): **not implemented**
-* Deployment to galaxy/meteor.com: **done**
-
 ## I just want to run an app
 
 So you got an app that uses Shower and you just want to install (or update) all dependencies and run it?
@@ -128,7 +109,7 @@ If you need to specify other ssh options (such as a special key), you'll have to
 
 Shower only knows how to deploy from git or bzr. The workspace directory is expected to be a git repo or a bazaar working tree; we figure out which one by checking first for `.bzr` and then `.git`. You don't need to tell Shower the remote, ref, or branch in the yaml file; just set up the workspace so that `bzr up` or `git pull` will do the right thing.
 
-We support three different deployment setups: single-instance (what I guess most people use), dual-instance, and multi-instance. Dual and multi instance provide zero-downtime deployment, and allow you to have a “preview” version of the site with the latest code, that you can use for QA before making it live. Dual should be good enough for all but the largest teams; multi might be good for automatic deployment with large teams, permitting seamless deployment of a new “preview” version without bringing the current preview offline. (Shower doesn't care if you have 3, 4, or 23000 instances; it will deploy to the one with the oldest revision that isn't either the current live or preview.)
+We support two different deployment setups: single-instance (what I guess most people use) and dual-instance. Dual-instance provides zero-downtime deployment, and allows you to have a “preview” version of the site with the latest code, that you can use for QA before making it live.
 
 Single-instance:
 
@@ -142,7 +123,7 @@ deployment:
 
 The actual running instance in this case will be in `/var/meteor/myproject/run`. (If you don't want your single instance to be named `run`, you can give it a name using the instance property, as you'll see below.)
 
-Dual or multi:
+Dual:
 
 ```yaml
 deployment:
@@ -162,7 +143,7 @@ Shower will create two symlinks `live` and `preview` in `/var/meteor/myproject`;
 
 The `instance_control` section above is telling Shower we're using [upstart](http://upstart.ubuntu.com/) to start and stop our instances, with init files named myproject-lois and myproject-lana. If not specified, Shower won't attempt to start or stop instances at all.
 
-To change the live instance, run (on the server or your own machine) `mts release`. That will make “preview” turn into “live”; in a dual-instance setup, “live” becomes “preview”, while in a multi-instance setup, “live” is stopped (if Shower knows how) and “preview” continues to point to the same instance as before (so both “live” and “preview” point to the same instance, which is the expected behaviour since that's the newest code).
+To change the live instance, run (on the server or your own machine) `mts release`. That will make “preview” turn into “live”, and “live” becomes “preview”.
 
 #### How do I point my load-balancer to the right port?
 
@@ -195,9 +176,9 @@ No, but you can. Just run `mts deploy` from a git or bzr hook on your master bra
 
 ### Can I use it to run my app on the server?
 
-That sounds like a great idea; it could manage your multiple instances, logfiles, etc. Maybe we'll add that.
+That sounds like a great idea; it could manage your instances, logfiles, etc. Maybe we'll add that.
 
-It would also be nice if we could take care of ROOT_URL for multi-instance setups, but that means before releasing, we need to restart preview and wait until it's running.
+It would also be nice if we could take care of ROOT_URL for dual-instance setups, but that means before releasing, we need to restart preview and wait until it's running.
 
 ### That's great, but I'm running it on myapp.meteor.com.
 
