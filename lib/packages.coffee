@@ -64,6 +64,9 @@ module.exports = patch: (cls) ->
                 return done new RunError "No package named #{name} in Atmosphere"
 
     cls::install = (done, continuation) ->
+        unless done?
+            # called as a command
+            done = ->
         return done() unless @config.packages?
         continuation ?= {}
         console.debug "in install; #{Object.keys(@config.packages).length - Object.keys(continuation).length} packgages left"
@@ -129,3 +132,4 @@ module.exports = patch: (cls) ->
                     else
                         return done new RunError "Unknown installation method #{options.from}"
         done()
+    cls::install.is_command = true
