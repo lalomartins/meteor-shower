@@ -63,10 +63,7 @@ module.exports = patch: (cls) ->
                         return done new RunError "Atmosphere package #{name} has no version #{version}"
                 return done new RunError "No package named #{name} in Atmosphere"
 
-    cls::install = (done, continuation) ->
-        unless done?
-            # called as a command
-            done = ->
+    cls::install_dependencies = (done, continuation) ->
         return done() unless @config.packages?
         continuation ?= {}
         console.debug "in install; #{Object.keys(@config.packages).length - Object.keys(continuation).length} packgages left"
@@ -91,7 +88,7 @@ module.exports = patch: (cls) ->
                                 done err
                             else
                                 console.debug 'done with atmosphere, continuing'
-                                @install done, continuation
+                                @install_dependencies done, continuation
                     when 'bzr'
                         unless shell.which 'bzr'
                             return done new RunError 'You don\'t seem to have bzr in your system. Please install it.'
@@ -126,10 +123,17 @@ module.exports = patch: (cls) ->
                                 done err
                             else
                                 console.debug 'done with atmosphere, continuing'
-                                @install done, continuation
+                                @install_dependencies done, continuation
                     when 'archive'
                         console.log "Sorry, installing from #{options.from} not yet implemented"
                     else
                         return done new RunError "Unknown installation method #{options.from}"
         done()
+
+    cls::install = ->
+        @install_dependencies (err) ->
+            if err?
+                throw err
+            # I'm not sure why, but otherwise this just hangs
+            process.exit 0
     cls::install.is_command = true

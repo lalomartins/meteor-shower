@@ -9,7 +9,7 @@ replace_vars = (vars, text) ->
 
 module.exports = patch: (cls) ->
     cls::run = ->
-        @install (err) =>
+        @install_dependencies (err) =>
             throw err if err?
             shell.pushd @root
             if @config?.development?.environment?

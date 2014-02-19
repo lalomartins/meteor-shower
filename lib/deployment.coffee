@@ -108,7 +108,7 @@ module.exports = patch: (cls) ->
             else
                 throw new RunError 'Workspace must be a Bazaar working tree or Git repo'
 
-        @install (err) =>
+        @install_dependencies (err) =>
             console.debug 'done with install'
             throw err if err?
 
