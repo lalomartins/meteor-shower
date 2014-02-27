@@ -2,7 +2,15 @@ os = require 'os'
 shell = require 'shelljs'
 
 replace_vars = (vars, text) ->
-    r = text
+    switch typeof text
+        when 'string'
+            r = text
+        when 'object'
+            r = JSON.stringify text
+        when 'undefined'
+            return
+        else
+            return "#{text}"
     for name, value of vars
         r = r.replace (new RegExp "\\$\\{#{name}\\}", 'g'), value
     r
