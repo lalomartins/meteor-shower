@@ -31,18 +31,23 @@ module.exports = patch: (cls) ->
                     done()
 
     cls::_install_from_atmosphere = (name, options, done) ->
+        if @_packages_installed[name]?
+            console.log "#{name} already installed, skipping"
+            unless @_packages_installed[name].from is 'atmosphere' and (@_packages_installed[name].version is options.version or not options.version?)
+                console.log "WARNING, possibly incompatible version #{@_packages_installed[name].version} != #{options.version}"
+            return done()
         @_connect_to_atmosphere =>
             ddpclient = @_atmosphere_client
             ddpclient.subscribe 'package', [name], =>
                 # "package" is a reserved word
                 for _id, pkg of ddpclient.collections.packages
                     if pkg.name is name
-                        version = options.version or pkg.version
+                        version = options.version or pkg.version or pkg.latest or pkg.versions[pkg.versions.length - 1].version
                         for pv in pkg.versions
                             if pv.version is version
                                 if fs.existsSync "#{@root}/packages/#{name}"
                                     shell.pushd "#{@root}/packages/#{name}"
-                                    shell.exec "git fetch #{pv.git}"
+                                    shell.exec "git fetch"
                                     shell.popd()
                                 else
                                     shell.exec "git clone --recursive #{pv.git} #{@root}/packages/#{name}"
@@ -50,13 +55,19 @@ module.exports = patch: (cls) ->
                                 shell.exec "git checkout v#{version}"
                                 shell.exec "git submodule update"
                                 shell.popd()
+                                if options.version?
+                                    @_packages_installed[name] = options
+                                else
+                                    @_packages_installed[name] = version: pv.version
+                                    for prop of options
+                                        @_packages_installed[name][prop] = options[prop]
                                 deps = []
                                 if pv.packages?
                                     # dependencies
                                     for dep_name, dep_options of pv.packages
                                         deps.push name: dep_name, version: dep_options.version
                                 if deps.length
-                                    console.log "installing #{name}'s dependencies: #{deps.join ', '}"
+                                    console.log "installing #{name}'s dependencies: #{("#{dep.name} @#{dep.version}" for dep in deps).join ', '}"
                                     return @_install_deps_from_atmosphere deps, done
                                 else
                                     return done()
@@ -66,6 +77,7 @@ module.exports = patch: (cls) ->
     cls::install_dependencies = (done, continuation) ->
         return done() unless @config.packages?
         continuation ?= {}
+        @_packages_installed ?= {}
         console.debug "in install; #{Object.keys(@config.packages).length - Object.keys(continuation).length} packgages left"
         for package_name, options of @config.packages
             continue if continuation[package_name]
@@ -100,6 +112,7 @@ module.exports = patch: (cls) ->
                         console.log "Sorry, updating from #{options.from} not yet implemented"
                     else
                         return done new RunError "Unknown installation method #{options.from}"
+                @_packages_installed[package_name] = options
             else
                 switch options.from
                     when 'git'
@@ -128,6 +141,7 @@ module.exports = patch: (cls) ->
                         console.log "Sorry, installing from #{options.from} not yet implemented"
                     else
                         return done new RunError "Unknown installation method #{options.from}"
+                @_packages_installed[package_name] = options
         done()
 
     cls::install = ->
