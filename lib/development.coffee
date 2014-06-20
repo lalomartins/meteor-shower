@@ -36,7 +36,7 @@ module.exports = patch: (cls) ->
                 for name, value of @config.development.environment
                     shell.env[name] = replace_vars vars, value
             meteor_cmdline = switch
-                when @config?.development?.settings?.length
+                when @config?.development?.settings?.length and fs.existsSync("#{@root}/#{@config.development.settings}")
                     "meteor --settings #{@root}/#{@config.development.settings}"
                 when fs.existsSync "#{@root}/.meteor/settings.json"
                     "meteor --settings #{@root}/.meteor/settings.json"

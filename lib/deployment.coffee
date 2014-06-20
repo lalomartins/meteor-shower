@@ -14,7 +14,7 @@ module.exports = patch: (cls) ->
                 unless @config.deployment.server?.length
                     throw new RunError 'Sure, I can deploy to meteor.com for you, but you need to tell me the subdomain. Use the "server" keyword in your setup file.'
                 args = ['deploy', @config.deployment.server]
-                if @config?.deployment?.settings?.length
+                if @config?.deployment?.settings?.length and fs.existsSync("#{@root}/#{@config.deployment.settings}")
                     args.push '--settings'
                     args.push "#{@root}/#{@config.deployment.settings}"
                 # can't use shell.exec for this due to password input
