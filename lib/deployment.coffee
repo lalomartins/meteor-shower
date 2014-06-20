@@ -13,8 +13,12 @@ module.exports = patch: (cls) ->
             when 'galaxy'
                 unless @config.deployment.server?.length
                     throw new RunError 'Sure, I can deploy to meteor.com for you, but you need to tell me the subdomain. Use the "server" keyword in your setup file.'
+                args = ['deploy', @config.deployment.server]
+                if @config?.deployment?.settings?.length
+                    args.push '--settings'
+                    args.push "#{@root}/#{@config.deployment.settings}"
                 # can't use shell.exec for this due to password input
-                child_process.spawn 'meteor', ['deploy', @config.deployment.server], {stdio: 'inherit'}
+                child_process.spawn 'meteor', args, {stdio: 'inherit'}
             when 'mts', undefined
                 if (@root is @config.deployment.workspace) and (fs.existsSync(@config.deployment.target)) and process.env.USER is @config.deployment.user
                     pidlock.guard @config.deployment.target, '_deploying.lock', (error, data, cleanup) =>

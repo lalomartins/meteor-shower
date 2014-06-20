@@ -92,6 +92,15 @@ development:
 
 We're also planning on an interface to specify other things that must also be running (e.g. mongod), but the interface for that isn't defined yet. Ideally we want to detect that it's already running and don't start it in that case; also, when the app stops, we don't necessarily want to stop those.
 
+Finally, you can also specify a settings.json file by using a settings key:
+
+```yaml
+development:
+    settings: ../settings-dev.json
+```
+
+If the path is relative, it's to the root of the app.
+
 ### Now it's time to deploy to my server
 
 I'll let you in on a secret, first: `mts deploy` actually runs entirely on your server. If you run it anywhere else, all it does is ssh into your server, go into the configured workspace for your project, and run `mts deploy` there.
@@ -190,9 +199,8 @@ Still, if you want to save a few keystrokes, or not bother to remember the whole
 deployment:
     server: myapp.meteor.com
     method: galaxy
+    settings: ../settings-production.json
 ```
-
-No, we won't store your password. I mean, come on, you're going to commit this and keep it in a (possibly public) repository somewhere, right? So you still have to type your password. Natch.
 
 ### I want to integrate with [RTD](http://xolvio.github.io/rtd/)
 

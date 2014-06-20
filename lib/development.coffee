@@ -1,3 +1,4 @@
+fs = require 'fs'
 os = require 'os'
 shell = require 'shelljs'
 
@@ -34,6 +35,13 @@ module.exports = patch: (cls) ->
                     break if vars.PUBLIC_IPV4? and vars.PUBLIC_IPV6?
                 for name, value of @config.development.environment
                     shell.env[name] = replace_vars vars, value
-            shell.exec 'meteor', async: true
+            meteor_cmdline = switch
+                when @config?.development?.settings?.length
+                    "meteor --settings #{@root}/#{@config.development.settings}"
+                when fs.existsSync "#{@root}/.meteor/settings.json"
+                    "meteor --settings #{@root}/.meteor/settings.json"
+                else
+                    'meteor'
+            shell.exec meteor_cmdline, async: true
             shell.popd
     cls::run.is_command = true
