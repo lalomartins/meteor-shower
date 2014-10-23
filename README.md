@@ -91,7 +91,7 @@ If the path is relative, it's to the root of the app.
 
 ### Now it's time to deploy to my server
 
-/Meteor Shower 0.5 and later require Meteor 0.9 or later for deploying./
+*Meteor Shower 0.5 and later require Meteor 0.9 or later for deploying.*
 
 I'll let you in on a secret, first: `mts deploy` actually runs entirely on your server. If you run it anywhere else, all it does is ssh into your server, go into the configured workspace for your project, and run `mts deploy` there.
 
