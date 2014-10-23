@@ -116,21 +116,22 @@ module.exports = patch: (cls) ->
             console.debug 'done with install'
             throw err if err?
 
-            shell.mkdir '-p', "#{@config.deployment.target}/_bundles"
+            shell.mkdir '-p', "#{@config.deployment.target}/_tree"
             shell.pushd @root
             # not quite sure I need this, but seems to avoid problems
             shell.rm '-rf', '.meteor/local/build'
-            console.log "meteor bundle #{@config.deployment.target}/_bundles/#{@deployment.revision}.tar.gz"
+            console.log "meteor build --directory #{@config.deployment.target}/_tree/#{@deployment.revision}"
             # async because shelljs' docs tell us to use async for long-running
             # processes, or it uses too much cpu waiting
-            shell.exec "meteor bundle #{@config.deployment.target}/_bundles/#{@deployment.revision}.tar.gz", (code, output) =>
+            shell.exec "meteor build --directory #{@config.deployment.target}/_tree/#{@deployment.revision}", (code, output) =>
                 shell.popd()
                 if code
-                    throw new RunError "meteor bundle failed with error code #{code}"
+                    throw new RunError "meteor build failed with error code #{code}"
 
-                shell.mkdir '-p', "#{@config.deployment.target}/_tree/#{@deployment.revision}"
                 shell.pushd "#{@config.deployment.target}"
-                shell.exec "tar -C _tree/#{@deployment.revision} --strip-components=1 -xf _bundles/#{@deployment.revision}.tar.gz"
+                shell.pushd "_tree/#{@deployment.revision}/programs/server"
+                shell.exec 'npm install'
+                shell.popd()
                 # shelljs master has ln, but no release yet does
                 # shell.ln '-fs', "_tree/#{@deployment.revision}", @deployment.instance
                 if @config.deployment.instance_control?.stop?

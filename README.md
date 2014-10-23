@@ -4,15 +4,9 @@ a configuration manager and deployment system for Meteor
 
 ## What
 
-Shower is a script that helps you install packages into your Meteor project, keep those up to date, and deploy the project to your own private server.
+Shower is a script that helps you configure your meteor environment and deploy the project to your own private server.
 
 My main motivation for writing this is so that it's easier to share LimeMakers' internal code with new team members, especially non-developers, without long lists of instructions about how to install and run it.
-
-### Don't we already have Meteorite?
-
-Meteorite allows you to install a package from a given tag of a given git repository. That's great for many uses, but not good enough for LimeMakers or my own projects. What if I want to run a package from a branch (e.g. Iron Router from the shark branch)? What if (oh the insanity!) I want to use something other than git?
-
-Apart from that, I also needed a good deployment solution. And I figured, since I need to manage packages in the server as well, these two things belonged together.
 
 ## I just want to run an app
 
@@ -32,11 +26,10 @@ All right, now we're talking. The first thing you need to know is that all confi
 
 What can we help you with?
 
-### Please manage my dependencies
+### I need to install packages from non-supported sources
 
 No problem. We can get packages as:
 
-* Atmosphere smart packages
 * Git repos (any branch, tag, or even specific revision)
 * Bazaar repos (tip of any given branch)
 
@@ -44,11 +37,6 @@ The example below has two of each, and all available options:
 
 ```yaml
 packages:
-    momentjs:
-        from: atmosphere
-    model:
-        from: atmosphere
-        version: 0.3.0
     paypal:
         from: git
         remote: https://github.com/LimeMakers/meteor-paypal.git
@@ -102,6 +90,8 @@ development:
 If the path is relative, it's to the root of the app.
 
 ### Now it's time to deploy to my server
+
+/Meteor Shower 0.5 and later require Meteor 0.9 or later for deploying./
 
 I'll let you in on a secret, first: `mts deploy` actually runs entirely on your server. If you run it anywhere else, all it does is ssh into your server, go into the configured workspace for your project, and run `mts deploy` there.
 
