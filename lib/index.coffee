@@ -1,6 +1,10 @@
 fs = require 'fs'
 yaml = require 'yamljs'
 
+shell = require 'shelljs'
+shell.config.fatal = true
+shell.config.silent = true
+
 class RunError extends Error
     # no idea why it won't pass on the message if I define it as
     # constructor: -> super

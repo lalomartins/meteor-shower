@@ -129,7 +129,11 @@ module.exports = patch: (cls) ->
                     throw new RunError "meteor build failed with error code #{code}"
 
                 shell.pushd "#{@config.deployment.target}"
-                shell.pushd "_tree/#{@deployment.revision}/programs/server"
+                
+                server_root = "_tree/#{@deployment.revision}/bundle/programs/server"
+                unless fs.existsSync
+                    server_root = "_tree/#{@deployment.revision}/programs/server"
+                shell.pushd server_root
                 shell.exec 'npm install'
                 shell.popd()
                 # shelljs master has ln, but no release yet does
