@@ -1,6 +1,7 @@
 fs = require 'fs'
 os = require 'os'
 shell = require 'shelljs'
+child_process = require 'child_process'
 
 replace_vars = (vars, text) ->
     switch typeof text
@@ -37,11 +38,11 @@ module.exports = patch: (cls) ->
                     shell.env[name] = replace_vars vars, value
             meteor_cmdline = switch
                 when @config?.development?.settings?.length and fs.existsSync("#{@root}/#{@config.development.settings}")
-                    "meteor --settings #{@root}/#{@config.development.settings}"
+                    ['--settings', "#{@root}/#{@config.development.settings}"]
                 when fs.existsSync "#{@root}/.meteor/settings.json"
-                    "meteor --settings #{@root}/.meteor/settings.json"
+                    ['--settings', "#{@root}/.meteor/settings.json"]
                 else
-                    'meteor'
-            shell.exec meteor_cmdline, async: true
+                    []
+            child_process.spawn 'meteor', meteor_cmdline, stdio: 'inherit'
             shell.popd
     cls::run.is_command = true
