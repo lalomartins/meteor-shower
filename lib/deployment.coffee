@@ -129,7 +129,7 @@ module.exports = patch: (cls) ->
                     throw new RunError "meteor build failed with error code #{code}"
 
                 shell.pushd "#{@config.deployment.target}"
-                
+
                 server_root = "_tree/#{@deployment.revision}/bundle/programs/server"
                 unless fs.existsSync
                     server_root = "_tree/#{@deployment.revision}/programs/server"
@@ -140,7 +140,10 @@ module.exports = patch: (cls) ->
                 # shell.ln '-fs', "_tree/#{@deployment.revision}", @deployment.instance
                 if @config.deployment.instance_control?.stop?
                     console.log @config.deployment.instance_control.stop.replace /\$\{instance\}/g, @deployment.instance
+                    # no need to fail if the instance isn't running
+                    shell.config.fatal = false
                     shell.exec @config.deployment.instance_control.stop.replace /\$\{instance\}/g, @deployment.instance
+                    shell.config.fatal = true
                 shell.exec "ln -fsT _tree/#{@deployment.revision} #{@deployment.instance}"
                 if @config.deployment.instance_control?.start?
                     console.log @config.deployment.instance_control.start.replace /\$\{instance\}/g, @deployment.instance
