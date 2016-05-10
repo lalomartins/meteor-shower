@@ -1,3 +1,7 @@
+# DEAD PROJECT
+
+I'm no longer using meteor, so this package will no longer be maintained.
+
 # Meteor Shower
 
 a configuration manager and deployment system for Meteor
